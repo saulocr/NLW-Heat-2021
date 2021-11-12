@@ -11,6 +11,7 @@ type User = {
 type AuthContextData = {
     user: User | null;
     signInUrl: string;
+    signOut: () => void;
 }
 
 
@@ -46,7 +47,14 @@ export function AuthProvider(props: AuthProvider) {
 
         localStorage.setItem('@dowhile:token', token)
 
+        api.defaults.headers.common.authorization = `Bearer ${token}`;
+
         setUser(user)
+    }
+
+    function signOut() {
+        setUser(null)
+        localStorage.removeItem('@dowhile:token')
     }
 
     useEffect(() => {
@@ -61,7 +69,6 @@ export function AuthProvider(props: AuthProvider) {
         }
     }, [])
 
-    //aula 2 1h27min33s
 
     useEffect(() => {
         const url = window.location.href;
@@ -77,7 +84,7 @@ export function AuthProvider(props: AuthProvider) {
     }, [])
 
     return(
-        <AuthContext.Provider value={{ signInUrl, user }}>
+        <AuthContext.Provider value={{ signInUrl, user, signOut }}>
             {props.children}
         </AuthContext.Provider>
     );
